@@ -5,6 +5,7 @@ const app = express()
 
 app.use(cors())
 app.use(express.json())
+app.use(express.static('dist'))
 //app.use(morgan('tiny'))
 
 morgan.token('body', function getData (request){ //(request, response) => {
