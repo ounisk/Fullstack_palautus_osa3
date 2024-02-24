@@ -18,6 +18,16 @@ const requestLogger = (request, response, next) => {
   next()
 }
 
+const errorHandler = (error, request, response, next) => {
+  console.error(error.message)
+
+  if (error.name === 'CastError') {
+    return response.status(400).send({ error: 'malformatted id' })
+  }
+
+  next(error)
+}
+
 app.use(requestLogger)
 
 
@@ -50,7 +60,7 @@ app.get('/', (request, response) => {
   })
 
 
-  app.get('/api/persons/:id', (request, response) => {
+  app.get('/api/persons/:id', (request, response, next) => {
     //const id = Number(request.params.id)
     //const person = persons.find(person => person.id === id)
     //if (person) {
@@ -98,7 +108,7 @@ app.get('/', (request, response) => {
     return persId
   }
   
-  app.post('/api/persons', (request, response) => {     // TEHTY 3.14
+  app.post('/api/persons', (request, response, next) => {     // TEHTY 3.14
     const body = request.body
     console.log('nimi, numero, id', body.name, body.number)
     if (!body.name) {
@@ -134,6 +144,22 @@ app.get('/', (request, response) => {
     .catch((error) => next(error))
   })
 
+  app.put('/api/persons/:id', (request, response, next) => {    // 3.17
+    const body = request.body
+  
+    const person = {
+      name: body.name,
+      number: body.number,
+    }
+  
+    Person.findByIdAndUpdate(request.params.id, person, { new: true })
+      .then(updatedPerson => {
+        response.json(updatedPerson)
+        console.log("tiedot on muutettu")
+      })
+      .catch(error => next(error))
+  })
+
   const unknownEndpoint = (request, response) => {
     response.status(404).send({ error: 'unknown endpoint' })
   }
@@ -142,15 +168,6 @@ app.get('/', (request, response) => {
   app.use(unknownEndpoint)
 
 
-  const errorHandler = (error, request, response, next) => {
-    console.error(error.message)
-  
-    if (error.name === 'CastError') {
-      return response.status(400).send({ error: 'malformatted id' })
-    }
-  
-    next(error)
-  }
   
   // tämä tulee kaikkien muiden middlewarejen ja routejen rekisteröinnin jälkeen!
   app.use(errorHandler)
