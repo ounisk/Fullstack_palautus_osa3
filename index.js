@@ -54,11 +54,13 @@ app.get('/', (request, response) => {
   app.get('/info', (request, response) => {
     const date = (new Date()).toString()
     console.log(date)
-    response.send(
+    
+    Person.find({}).then(persons => {
+      response.send(
         `<p> Phonebook has info for ${persons.length} persons </p>
         <p>${date}</p>`)
   })
-
+  })
 
   app.get('/api/persons/:id', (request, response, next) => {
     //const id = Number(request.params.id)
