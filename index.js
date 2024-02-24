@@ -131,6 +131,7 @@ app.get('/', (request, response) => {
     person.save().then(savedPerson => {
       response.json(savedPerson)
     })
+    .catch((error) => next(error))
   })
 
   const unknownEndpoint = (request, response) => {
