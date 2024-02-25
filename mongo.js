@@ -20,8 +20,8 @@ mongoose.connect(url)
 //})
 
 const personSchema = new mongoose.Schema({
-    name: String,
-    number: String
+  name: String,
+  number: String
 })
 
 //const Note = mongoose.model('Note', noteSchema)
@@ -32,27 +32,27 @@ const Person = mongoose.model('Person', personSchema)
 //  important: true,
 //})
 
-if (process.argv.length ==5) {
-    const person = new Person({
-        name: String(process.argv[3]),
-        number: String(process.argv[4]),
-    })
+if (process.argv.length ===5) {
+  const person = new Person({
+    name: String(process.argv[3]),
+    number: String(process.argv[4]),
+  })
 
-    person.save().then(result => {
-        console.log(`added ${result.name} number ${result.number} to the phonebook`)
-        mongoose.connection.close()
-    })
+  person.save().then(result => {
+    console.log(`added ${result.name} number ${result.number} to the phonebook`)
+    mongoose.connection.close()
+  })
 }
 
-if (process.argv.length == 3) {
-    console.log(`phonebook`)
-    Person.find({}).then(persons => {
-        persons.forEach(person => {
-            console.log(`${person.name} ${person.number}`)
-          })
-          mongoose.connection.close()
-        })
-    }
+if (process.argv.length === 3) {
+  console.log('phonebook')
+  Person.find({}).then(persons => {
+    persons.forEach(person => {
+      console.log(`${person.name} ${person.number}`)
+    })
+    mongoose.connection.close()
+  })
+}
 
 
 //note.save().then(result => {
