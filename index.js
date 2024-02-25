@@ -22,7 +22,9 @@ const errorHandler = (error, request, response, next) => {
   console.error(error.message)
 
   if (error.name === 'CastError') {
-    return response.status(400).send({ error: 'malformatted id' })
+    return response.status(400).send({ error: 'malformatted id' })  
+  } else if (error.name === 'ValidationError') {
+      return response.status(400).json({ error: error.message })
   }
 
   next(error)
@@ -54,7 +56,7 @@ app.get('/', (request, response) => {
   app.get('/info', (request, response) => {
     const date = (new Date()).toString()
     console.log(date)
-    
+
     Person.find({}).then(persons => {
       response.send(
         `<p> Phonebook has info for ${persons.length} persons </p>
@@ -110,7 +112,7 @@ app.get('/', (request, response) => {
     return persId
   }
   
-  app.post('/api/persons', (request, response, next) => {     // TEHTY 3.14
+  app.post('/api/persons', (request, response, next) => {     // TEHTY 3.14, 3.19 next 
     const body = request.body
     console.log('nimi, numero, id', body.name, body.number)
     if (!body.name) {
@@ -146,15 +148,19 @@ app.get('/', (request, response) => {
     .catch((error) => next(error))
   })
 
-  app.put('/api/persons/:id', (request, response, next) => {    // 3.17
-    const body = request.body
+  app.put('/api/persons/:id', (request, response, next) => {    // 3.17 & 3.19
+    //const body = request.body
+    const { name, number} = request.body
   
     const person = {
       name: body.name,
       number: body.number,
     }
   
-    Person.findByIdAndUpdate(request.params.id, person, { new: true })
+    //Person.findByIdAndUpdate(request.params.id, person, { new: true })
+    Person.findByIdAndUpdate(request.params.id,
+       {name, number}, { new: true, runValidators:true, context:"query"})
+
       .then(updatedPerson => {
         response.json(updatedPerson)
         console.log("tiedot on muutettu")
