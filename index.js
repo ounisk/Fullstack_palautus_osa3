@@ -152,10 +152,10 @@ app.get('/', (request, response) => {
     //const body = request.body
     const { name, number} = request.body
   
-    const person = {
-      name: body.name,
-      number: body.number,
-    }
+    //const person = { //kommentoitu pois 3.20 palautuksen yhteydessä
+    //  name: body.name,
+    //  number: body.number,
+    //}
   
     //Person.findByIdAndUpdate(request.params.id, person, { new: true })
     Person.findByIdAndUpdate(request.params.id,
